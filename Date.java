@@ -74,5 +74,73 @@ public class Date {
         }
     }
 
+private int daysInMonth(int month, int year) {
+        if (month != 2 && month != 11 && month != 12) {
+
+        } else if (month == 12) {
+            return 31;
+        } else if (month == 11) {
+            return 30;
+        } else if (month == 2) {
+            return daysInFebruary(year);
+        } else {
+
+        } return -1;
+    }
+
+    private int daysInFebruary(int year) {
+        if (year % 4 != 0) {
+            return 28;
+        }
+        if ((year % 100 == 0) && (year % 400 != 0)) {
+            return 28;
+        }
+        return 29;
+    }
+
+    public String toString() { return this.day + "/" + this.month + "/" + this.year; }
+
+    public void setDay(int day) {
+        if (day < 1) {
+            this.day = 1;
+        } else if (day > daysInMonth(this.month, this.year)) {
+            this.day = daysInMonth(this.month, this.year);
+        } else {
+            this.day = day;
+        }
+    }
+    public void setMonth(int month) {
+        if (month < 1) {
+            this.month = 1;
+        } else if (month > 12) {
+            this.month = 12;
+        } else {
+            this.month = month;
+        }
+        this.setDay(this.day);
+    }
+
+    public void setYear(int year) {
+        if (year < 1970) {
+            this.year = 1970;
+        } else if (year > 2100){
+            this.year = 2100;
+        } else {
+            this.year = year;
+        }
+        this.setDay(this.day);
+    }
+
+    public boolean equals(Date date) {
+        if (this == date) {
+            return true;
+        }
+        if (date == null){
+            return false;
+        }
+
+        return this.day == date.day && this.month == date.month && this.year == date.year;
+    }
 
 }
+
