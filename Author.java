@@ -58,18 +58,30 @@ public void setEmail(String email) {
     }
   }
 
-public boolean equals(Author author) {
-    if (this == author) {
-      return true;
+// compare if authors are the same
+  public boolean equals (Author author){
+// boolean for result
+  boolean result = true;
+// if author is not empty
+  if (author != null){
+  if (this.firstName.equals(author.firstName) && this.lastName.equals(author.lastName) &&
+  this.birthday.equals(author.birthday) && this.residence.equals(author.residence) && this.email.equals(author.email)){
+      result = true;
+    } else {
+      result = false;
+    }} else {
+      System.out.println("author wasn't initialized");
+      result = false;
     }
-
-    if (author == null) {
-      return false;
-    }
- return this.firstName.equals(author.firstName) && this.lastName.equals(author.lastName)
- && this.residence.equals(author.residence) && this.email.equals(author.email)
- && ((this.birthday != null && this.birthday.equals(author.birthday))
- || (this.birthday == null && author.birthday == null));
-
+    return result;
+  }
+  
+  public static void main (String [] args ){
+    Date birthday = new Date (1, 1, 1990);
+    Date date2 = new Date(1, 1, 1990);
+    Author author1 = new Author("Tsoy", "Tatiana", birthday, "Munich", "tanya11@com");
+    Author author2 = new Author("Tsoy", "Tatiana", date2, "Munich", "tanya11@de");
+    System.out.println(author2.equals(author1));
+  }
 }
-}
+  
