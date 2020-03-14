@@ -1,6 +1,6 @@
 import javax.print.Doc;
 
-public class Document{
+public class Document {
 private String title;
 private String description;
 private String language;
@@ -101,7 +101,116 @@ private static String[] tokenize(String content) {
             word = word + content.charAt(i);
         }
     }
-
     return words;
     }
+
+    private void addContent(String content) {
+    String[] words = Document.tokenize(content);
+
+    this.wordCounts = new WordCountsArray(0);
+
+    for (int i = 0; i < words.length; i++){
+        String word = words[i];
+        // find suffix and cut it
+        String suffix = Document.findSuffix(word);
+        word = Document.cutSuffix(word, suffix);
+
+        this.wordCounts.add(word, 1);
+    }}
+    // Determines if last characters of word1 and word2 are equal
+    // n : how many characters to be checked
+    private static boolean sufficesEqual(String word1, String word2, int n){
+    if (n > word1.length() || n > word2.length()) {
+        return false;
+    }
+
+    boolean isEqual = true;
+    int i = 0;
+
+    while(isEqual && i < n){
+        // begin comparison at last char
+        if (word1.charAt(word1.length()-1-i) != word2.charAt(word2.length()-1-i)){
+            isEqual = false;
+        }
+        i++;
+    }
+    return isEqual;
+    }
+    /*
+    Method uses suffices to find out, whether specified words ends with one of these suffices
+     */
+    private static String findSuffix(String word) {
+        if (word == null || word.equals("")){
+            return null;
+        }
+
+        String suffix = "";
+        String suffixHit = "";
+        int i = 0;
+
+        while (i < Document.SUFFICES.length){
+            suffix = Document.SUFFICES[i];
+
+        // checks, if this suffix is a suffix of word
+        if (sufficesEqual(word, suffix, suffix.length())){
+            if(suffixHit.length() < suffix.length()) {
+                suffixHit = suffix;
+            }
+        }
+        i++;
+        }
+        return suffixHit;
+    }
+
+    /*
+    if suffix is a suffix of word, then it'll be cutted off from word and
+    remaining word stem is returned
+     */
+    private static String cutSuffix(String word, String suffix) {
+        if (suffix == null || suffix.equals("")){
+            return word;
+        }
+        if (word == null) {
+            return null;
+        }
+
+        // not a suffix
+        if (!sufficesEqual(word, suffix, suffix.length())){
+            return word;
+        }
+
+        String wordWithoutSuffix = "";
+
+        for(int i = 0; i < word.length() - suffix.length(); i++){
+            wordWithoutSuffix = wordWithoutSuffix + word.charAt(i);
+        }
+        return wordWithoutSuffix;
+    }
+
+    public boolean equals (Document document){
+        boolean result = true;
+        if (document != null){
+            if(this.title.equals(document.title) && this.language.equals(document.language) && this.description.equals(document.description)
+            && this.releaseDate.equals(document.releaseDate) && this.author.equals(document.author)){
+                result = true;
+        } else {
+            result = false;
+            }} else {
+            System.out.println("Document is empty");
+            result = false;
+        }
+        return result;
+    }
+
+    public static void main (String [] args) {
+        Date d1 = new Date(1, 1, 1990);
+        Date d2 = new Date(1, 1, 1990);
+        Author a1 = new Author(null, null, null, null, null);
+        Author a2 = new Author("Tsoy", "Tatiana", d2, "Munich", "tanya11@com.com");
+        Document doc1 = new Document("name", "en", "text", d1, a1, "llll");
+        Document doc2 = new Document("name", "en", "text", d2, a2, "llll");
+        System.out.println(doc1.equals(doc2));
+    }
+
+
 }
