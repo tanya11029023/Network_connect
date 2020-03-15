@@ -1,132 +1,174 @@
-
-import javax.swing.event.DocumentEvent;
-
 public class DocumentCollection {
-    // all elements of DocumentCollection
-    private DocumentCollectionCell elements;
     // begin of list
     private DocumentCollectionCell start;
+    // last element in the collection 
+    private DocumentCollectionCell end;
+    private int size; 
+    
     // empty list
-    public DocumentCollection() {elements = null; }
+    public DocumentCollection() {
+    this.start = null; 
+    this.end = null; 
+    this.size = 0; 
+    }
 
 // add element in the beginning of the list
-    public void prependDocument (Document doc){
-        DocumentCollectionCell newEl = new DocumentCollectionCell(doc);
-        /*
-        create new list with current elements
-        */
-        DocumentCollectionCell curList = elements;
-
+    public void prependDocument(Document doc){
+        
         // if doc is empty, no change
         if (doc == null) {
             return;
-        } else { // if elements is still empty, put newEl in list
-            if (elements == null) {
-                elements = newEl;
-            } else {
-                // if there are some elements, move next elements to the next places
-                while (elements.getNext() != null){
-                    elements.setNext(elements.getNext());
-                } // after moving all elements to next place, set newEl in the beginning
-                elements = newEl;
-            }
         }
+        
+        if (this.isEmpty()) { // if list is empty, add as only element
+            this.start = new DocumentCollectionCell(doc, null, null);
+            // move former first object to the last
+            this.end = start;     
+            } else {  
+                // if there are some elements, move next elements to the right
+                // set next as former first object with , delete previous 
+                start.setPrevious(new DocumentCollectionCell(doc, null, start);
+                // first element is previous one (moving right)
+                this.start = start.getPrevious();
+        }
+        size++; 
     }
+                                  
     // add element in the end of list
     public void appendDocument (Document doc){
-        // create new cell for doc
-        DocumentCollectionCell newEl = new DocumentCollectionCell(doc);
+  
         // if doc is empty do nothing
         if (doc == null) {
             return;
-        } else { // if doc is not empty, check if list is empty
-            if (elements == null){
-                elements = newEl; }
-            else {
-                while (elements.getNext() == null) {
-                    // set new element on the end of list
-                    elements.setNext(newEl);
-                }
+        } 
+        
+        if (this.isEmpty()){
+            //list is empty add as only element
+                this.start = new DocumentCollectionCell(doc, null, null);
+                this.end = start; }
+            else { // there are some elements, search empty and add in the end 
+                end.setNext = new DocumentCollectionCell(doc, end, null); 
+                end = end.getNext(); 
             }
+        size++; 
+    }
+    // search index of document in this collection
+    // if document contained many time, the lowest index will be returned 
+                                  
+    public int indexOf(Document doc) {
+        if(doc==null || this.isEmpty())
+            return -1; 
+        
+        // loop over list and find document 
+        DocumentCollectionCell tmp = this.start;
+        int index = 0; 
+        
+        while (tmp != null) {
+         if(tmp.getDocument().equals(doc){
+         return index;
+         }
+         tmp = tmp.getNext();
+         index++; 
         }
+    return -1; 
+    }
+    // if document has index, its in this collection 
+    public boolean contains(Document doc) {
+    return (this.indexOf(doc) != -1); 
     }
 
     public boolean isEmpty(){
-        return elements == null ? true : false;
+        return this.size == 0;
     }
 
     public int numDocs() {
-        int result = 1;
-        while (elements.getNext()!= null){
-            elements = elements.getNext();
-            result++;
-        }
-        return result;
+        return this.size; 
     }
+            
+    public void clear() {
+        this.first = null; 
+        this.last = null; 
+        this.size = 0; 
+    } 
     public Document getFirstDocument(){
-        Document result = null;
-        // cell for found first element
-        DocumentCollectionCell found;
-        if (isEmpty()){
-            result = null;
-        } else { // if list has elements --> find first one
-            found = elements;
-            result = found.getDoc();
+        if(this.isEmpty()){
+        return null; 
         }
-        return result;
+        return this.start.getDocument(); 
     }
 
     public Document getLastDocument(){
-        Document res = null;
-        DocumentCollectionCell found;
-        if (isEmpty()) {
-            res = null;
-        } else {
-            while(elements.getNext() != null){
-                found = elements.getNext();
-                res = found.getDoc();
-            }
+        if (this.isEmpty()){
+        return null; 
         }
-        return res;
+        return this.end.getDocument(); 
     }
+            
     public void removeFirstDocument() {
-        if (isEmpty()){
+        if (this.isEmpty()){
             return;
-        } else {
-            while (elements.getNext() != null){
-                elements = elements.getNext();
+        } 
+        if (this.numDocs() == 1){
+            this.clear();
+            return;
             }
-        }
+        this.start = this.start.getNext(); 
+        this.start.setPrevious(null);
+        size--; 
     }
     public void removeLastDocument() {
-        if (isEmpty()){
+        if (this.isEmpty()){
             return;
-        } else { // last element found
-            if (elements.getNext() == null){
-                elements.setNext(null);
+        } 
+        if (this.numDocs() == 1){
+            this.clear();
+            return; 
             }
+        this.end = this.end.getPrevious();
+        this.end.setNext(null);
+        size--; 
         }
     }
 
     public boolean remove(int index) {
-        // if index less than number of documents, return
-        if (index < numDocs()){
-            return false;
-        } else if (index == 0){
-            removeFirstDocument();
-            return true; }
-        else if (index == numDocs()){
-            removeLastDocument();
-            return true;
-        } else {
-            int j = 0;
-            // search document in list
-            while (j < index -1 ){
-                elements = elements.getNext();
-                j++;
-            } // element on index found --> set next on this place
-            elements.setNext(elements.getNext());
+        if (index < 0 || index >= this.numDocs()){
+        return false; 
         }
-        return true;
-    }
+        
+        if(this.isEmpty()) {
+            return false; 
+        }
+        // remove first 
+        if (index == 0) {
+            this.removeFirstDocument();
+            return true; 
+            // remove last 
+        } 
+        if (index == this.numDocs() - 1){
+            this.removeLastDocument();
+            return true;
+        } 
+        
+        // if index >=1 and size >=2 
+        // loop to index, keep track of previous 
+        DocumentCollectionCell actual = this.start.getNext();
+        DocumentCollectionCell prev = this.start; 
+        int i = 1; 
+        
+        for (int i = 1; i < index; i++) {
+         prev = actual;
+         actual = actual.getNext(); 
+        }
+        // delete actual 
+        prev.setNext(actual.getNext()); 
+        prev.getNext().setPrevious(prev); 
+        size--; 
+        return true; 
 }
+            
+    public Document get(int index){
+        if (index < 0 || index >= this.size) {
+            return null;
+        }
+        return getDocumentCollectionCell(index).getDocument();
+    }}
