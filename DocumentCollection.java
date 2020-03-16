@@ -171,4 +171,23 @@ public class DocumentCollection {
             return null;
         }
         return getDocumentCollectionCell(index).getDocument();
-    }}
+    }
+/*
+* loop over all documents to create a WordCountsArray containing *all* words of
+* all documents
+*/
+private WordCountsArray allWords() {
+ DocumentCollectionCell tmp = this.first; 
+ WordCountsArray allWords = new WordCountsArray(0);
+    
+ while (tmp != null) {
+ Document doc = tmp.getDocument(); 
+ WordCountsArray wca = doc.getWordCounts(); 
+        
+    for (int i =  0; i < wca.size();i++) {
+        allWords.add(wca.getWord(i), 0);
+    }
+        tmp = tmp.getNext();
+}
+       return allWords; 
+}}
