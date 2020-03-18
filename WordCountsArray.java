@@ -1,4 +1,6 @@
 public class WordCountsArray {
+
+    // controlled WordCount object
     private WordCount[] wordCounts;
     private int actualSize;
     private int maxSize;
@@ -79,9 +81,9 @@ private void doBucketSort() {
     WordCountsArray[] buckets = new WordCountsArray[27];
 
     // initialize buckets
-    for (int i = 0; i < buckets.length; i++){
-        buckets[i] = new WordCountsArray(this.actualSize/buckets.length);
-
+    for (int i = 0; i < buckets.length; i++) {
+        buckets[i] = new WordCountsArray(this.actualSize / buckets.length);
+    }
     int maxLength = 0;
     for (int i = 0; i < this.actualSize; i++){
         maxLength = Math.max(maxLength, this.getWord(i).length());
@@ -91,19 +93,19 @@ private void doBucketSort() {
         String word = this.getWord(i);
         int charIndex = bucketAt(word, maxLength, 0);
         if (charIndex >= 0){
-            int count = this.getCount();
+            int count = this.getCount(i);
             buckets[charIndex].add(word, count);
         }
     }
     for (int pos = 1; pos < maxLength; pos++){
-        WordCountsArray[] bucketsNew = new WordCountsArray[buckets.length];
-        for (int i = 0; i < bucketsNew.length; i++){
-            bucketsNew[i] = new WordCountsArray(this.actualSize/buckets.length);
+        WordCountsArray[] bucketsNew = new WordCountsArray[26];
+        for (int i = 0; i < bucketsNew.length; i++)
+            bucketsNew[i] = new WordCountsArray(this.actualSize/26);
         for(int i = 0; i < buckets.length;i++){
             for(int j = 0; j < buckets[i].size(); j++){
                 String word = buckets[i].getWord(j);
-                int charIndex = bucketAt(word, maxLength, pos);
-                int count = bucket[i].getCount(j);
+                int charIndex = bucketAt(word, maxLength, pos) - 'a';
+                int count = buckets[i].getCount(j);
                 bucketsNew[charIndex].add(word, count);
             }
         }
@@ -114,35 +116,21 @@ private void doBucketSort() {
 
         // concatenate sorted buckets into new array
     int j = 0;
-    for (int bucket = 0; bucket < bucket.length; bucket++) {
-        for (int i = 0; i < buckets[bucket].size(); i++) {
+    for (int bucket = 0; bucket < buckets.length; bucket++) {
+        for (int i = 0; i < buckets[bucket].size(); i++, j++) {
             newWordCounts[j] = buckets[bucket].get(i);
-            j++;
         }
     }
     this.wordCounts = newWordCounts;
     this.maxSize = this.actualSize;
     }
-    }
-private boolean wordsEqual(WordCountsArray wca) {
-        // the same words
-        if (this == wca) {
-            return true;
-        }
-        // words can't be the same
-        if ((wca == null) || (this.size() != wca.size())){
-            return false;
-        }
 
-        // compare every single word at every position
-        for (int i = 0; i < this.size(); i++) {
-        // words are not the same, return false
-            if (!this.getWord(i).equals(wca.getWord(i))) {
-                return false;
-            }
-        }
-        return true;
+private WordCount get(int index) {
+    if (index < 0 || index >= this.actualSize) {
+        return null;
     }
+    return this.wordCounts[index];
+}
 
 // calculate weight of single words in WordCountsArray and save them in appropriate
 // Word-Count object.
@@ -186,4 +174,75 @@ private void calculateNormalizedWeights(DocumentCollection dc) {
             this.wordCounts[i].setNormalizedWeight(0);
     }
 }
-}}}
+}
+
+public int size() {return this.actualSize; }
+
+public String getWord(int index) {
+    if (index < 0 || index >= this.actualSize){
+        return null;
+    }
+    return this.wordCounts[index].getWord();
+}
+
+public int getCount(int index) {
+    if (index < 0 || index >= this.actualSize)
+        return 0;
+    return this.wordCounts[index].getCount();
+}
+
+public int getIndexOfWord(String word) {
+    if (word == null || word.equals("")){
+        return -1;
+    }
+
+    // search word in array of WordCounts
+    for(int i = 0; i < this.actualSize; i++) {
+        if (this.wordCounts[i].getWord().equals(word)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+public void setCount(int index, int count) {
+    if (index < 0 || index > this.actualSize) {
+        return;
+    }
+
+    if (count < 0 ) {
+        this.wordCounts[index].setCount(0);
+    } else {
+        this.wordCounts[index].setCount(index);
+    }
+}
+
+private void doubleSize() {
+    this.maxSize = this.maxSize * 2;
+
+    if (this.maxSize <= 0) {
+        this.maxSize = 1;
+    }
+
+    WordCount[] newWordCount = new WordCount[this.maxSize];
+
+    for (int i = 0; i < wordCounts.length; i++) {
+        newWordCount[i] = this.wordCounts[i];
+    }
+    this.wordCounts = newWordCount;
+}
+// if instance and specified WordCountsArray are equal
+public boolean equals(WordCountsArray wca) {
+    if (this == wca)
+        return true;
+
+    if (wca == null || this.size() != wca.size())
+        return false;
+
+    // compare word and their counts at every position
+    for (int i = 0; i < this.size(); i++) {
+        if (!this.getWord(i).equals(wca.getWord(i)) || this.getCount(i) != wca.getCount(i))
+            return false;
+    } return true;
+}
+}
