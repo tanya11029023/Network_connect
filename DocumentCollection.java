@@ -27,7 +27,7 @@ public class DocumentCollection {
             } else {  
                 // if there are some elements, move next elements to the right
                 // set next as former first object with , delete previous 
-                start.setPrevious(new DocumentCollectionCell(doc, null, start);
+                start.setPrevious(new DocumentCollectionCell(doc, null, start));
                 // first element is previous one (moving right)
                 this.start = start.getPrevious();
         }
@@ -47,16 +47,15 @@ public class DocumentCollection {
                 this.start = new DocumentCollectionCell(doc, null, null);
                 this.end = start; }
             else { // there are some elements, search empty and add in the end 
-                end.setNext = new DocumentCollectionCell(doc, end, null); 
+                end.setNext(new DocumentCollectionCell(doc, end, null));
                 end = end.getNext(); 
             }
         size++; 
     }
     // search index of document in this collection
-    // if document contained many time, the lowest index will be returned 
-                                  
+    // if document contained many time, the lowest index will be returned
     public int indexOf(Document doc) {
-        if(doc==null || this.isEmpty())
+        if(doc == null || this.isEmpty())
             return -1; 
         
         // loop over list and find document 
@@ -64,7 +63,7 @@ public class DocumentCollection {
         int index = 0; 
         
         while (tmp != null) {
-         if(tmp.getDocument().equals(doc){
+         if(tmp.getDoc().equals(doc)) {
          return index;
          }
          tmp = tmp.getNext();
@@ -86,22 +85,22 @@ public class DocumentCollection {
     }
             
     public void clear() {
-        this.first = null; 
-        this.last = null; 
+        this.start = null;
+        this.end = null;
         this.size = 0; 
     } 
     public Document getFirstDocument(){
         if(this.isEmpty()){
         return null; 
         }
-        return this.start.getDocument(); 
+        return this.start.getDoc();
     }
 
     public Document getLastDocument(){
         if (this.isEmpty()){
         return null; 
         }
-        return this.end.getDocument(); 
+        return this.end.getDoc();
     }
             
     public void removeFirstDocument() {
@@ -128,7 +127,6 @@ public class DocumentCollection {
         this.end.setNext(null);
         size--; 
         }
-    }
 
     public boolean remove(int index) {
         if (index < 0 || index >= this.numDocs()){
@@ -152,8 +150,7 @@ public class DocumentCollection {
         // if index >=1 and size >=2 
         // loop to index, keep track of previous 
         DocumentCollectionCell actual = this.start.getNext();
-        DocumentCollectionCell prev = this.start; 
-        int i = 1; 
+        DocumentCollectionCell prev = this.start;
         
         for (int i = 1; i < index; i++) {
          prev = actual;
@@ -165,29 +162,52 @@ public class DocumentCollection {
         size--; 
         return true; 
 }
+
+    private DocumentCollectionCell getDocCollectionCell(int index) {
+        if (index < 0 || index >= this.numDocs())
+            return null;
+
+        DocumentCollectionCell tmp = this.start;
+        for (int i = 0; i < index; i++) {
+            tmp = tmp.getNext();
+        }
+        return tmp;
+}
             
     public Document get(int index){
         if (index < 0 || index >= this.size) {
             return null;
         }
-        return getDocumentCollectionCell(index).getDocument();
+        return getDocCollectionCell(index).getDoc();
     }
 /*
 * loop over all documents to create a WordCountsArray containing *all* words of
 * all documents
 */
-private WordCountsArray allWords() {
- DocumentCollectionCell tmp = this.first; 
- WordCountsArray allWords = new WordCountsArray(0);
-    
- while (tmp != null) {
- Document doc = tmp.getDocument(); 
- WordCountsArray wca = doc.getWordCounts(); 
-        
-    for (int i =  0; i < wca.size();i++) {
-        allWords.add(wca.getWord(i), 0);
+    private WordCountsArray allWords() {
+        DocumentCollectionCell tmp = this.start;
+        WordCountsArray allWords = new WordCountsArray(0);
+           
+        while (tmp != null) {
+        Document doc = tmp.getDoc();
+        WordCountsArray wca = doc.getWordCounts(); 
+               
+           for (int i =  0; i < wca.size();i++) {
+               allWords.add(wca.getWord(i), 0);
+           }
+               tmp = tmp.getNext();
+        }
+        return allWords; 
     }
-        tmp = tmp.getNext();
+    // number of docs in which word has frequency >= 1
+    public int noOfDocsContainingWord(String word) {
+int res = 0;
+
+for (int i = 0; i < numDocs(); i++) {
+    if (get(i).getWordCounts().getIndexOfWord(word) != -1) {
+        res++;
+    }
 }
-       return allWords; 
-}}
+return res;
+}
+}
