@@ -162,7 +162,6 @@ public class DocumentCollection {
         size--; 
         return true; 
 }
-
     private DocumentCollectionCell getDocCollectionCell(int index) {
         if (index < 0 || index >= this.numDocs())
             return null;
@@ -180,24 +179,22 @@ public class DocumentCollection {
         }
         return getDocCollectionCell(index).getDoc();
     }
-/*
-* loop over all documents to create a WordCountsArray containing *all* words of
-* all documents
-*/
+    //loop over all documents to create a WordCountsArray containing *all* words of
+    // all documents
     private WordCountsArray allWords() {
         DocumentCollectionCell tmp = this.start;
         WordCountsArray allWords = new WordCountsArray(0);
-           
+
         while (tmp != null) {
         Document doc = tmp.getDoc();
-        WordCountsArray wca = doc.getWordCounts(); 
-               
+        WordCountsArray wca = doc.getWordCounts();
+
            for (int i =  0; i < wca.size();i++) {
                allWords.add(wca.getWord(i), 0);
            }
                tmp = tmp.getNext();
         }
-        return allWords; 
+        return allWords;
     }
     // number of docs in which word has frequency >= 1
     public int noOfDocsContainingWord(String word) {
@@ -210,4 +207,47 @@ for (int i = 0; i < numDocs(); i++) {
 }
 return res;
 }
+    // calculate similirity between specified query and all documents in this
+    // DocumentCollection. Then its sorts documents in this collection according to the similarity
+    public void match(String searchQuery) {
+        if (this.isEmpty())
+            return;
+        if (searchQuery == null || searchQuery.equals(""))
+            return;
+        // add query to collection
+        Document searchQ = new Document(null, null, null, null, null, searchQuery);
+        this.prependDocument(searchQ);
+        // add word to document with count 0
+        this.addZeroWordsToDocs();
+
+        // sort all WordCountsArrays of all docs
+        DocumentCollectionCell tmp = this.start;
+        while (tmp != null ) {
+            tmp.getDoc().getWordCounts().sort();
+            tmp = tmp.getNext();
+        }
+
+        // calcualte similiraties with query document
+        tmp = this.start.getNext();
+        while (tmp != null) {
+            tmp.setQuerySimilarity(tmp.getDoc().getWordCounts().computeSimilarity(searchQ.getWordCounts()));
+            tmp = tmp.getNext();
+        }
+        this.removeFirstDocument();
+    }
+    // set of all words in all documents of collection and add every word to every document
+    // in this colllection with count 0. After execution, all documents will contain the same words as before
+    private void addZeroWordsToDocs() {
+        WordCountsArray allWords = this.allWords();
+        DocumentCollectionCell tmp = this.start;
+
+        while(tmp != null){
+            for (int i = 0; i < allWords.size(); i++){
+                String word = allWords.getWord(i);
+                tmp.getDoc().getWordCounts().add(word, 0);
+            }
+            tmp = tmp.getNext();
+        }
+    }
+
 }
