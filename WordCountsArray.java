@@ -245,4 +245,30 @@ public boolean equals(WordCountsArray wca) {
             return false;
     } return true;
 }
+
+// calculate similarity of instance and specified WordCountsArray from 0.00 to 1.00
+public double computeSimilarity(WordCountsArray wca){
+    if (wca == null)
+        return 0;
+
+    double scalarProThis = this.scalarProduct(this);
+    double scalarProWca = this.scalarProduct(wca);
+
+    double scalarProduct = 0;
+
+    if (scalarProThis != 0 && scalarProWca != 0)
+        scalarProduct = this.scalarProduct(wca) / (Math.sqrt(scalarProThis * scalarProWca));
+    return scalarProduct;
+}
+
+public double scalarProduct(WordCountsArray wca) {
+    if (wca == null || this.size() != wca.size() || (this != wca) && !this.wordsEqual(wca))
+        return 0;
+    double scalarProduct = 0;
+
+    for (int i = 0; i < this.size(); i++)
+        scalarProduct += this.getCount(i) * wca.getCount(i);
+    return scalarProduct;
+}
+
 }
