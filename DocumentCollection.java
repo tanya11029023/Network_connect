@@ -3,18 +3,15 @@ public class DocumentCollection {
     private DocumentCollectionCell start;
     // last element in the collection 
     private DocumentCollectionCell end;
-    private int size; 
-    
+    private int size;
     // empty list
-    public DocumentCollection() {
+    public DocumentCollection(){
     this.start = null; 
     this.end = null; 
     this.size = 0; 
     }
-
-// add element in the beginning of the list
+    // add element in the beginning of the list
     public void prependDocument(Document doc){
-        
         // if doc is empty, no change
         if (doc == null) {
             return;
@@ -33,7 +30,6 @@ public class DocumentCollection {
         }
         size++; 
     }
-                                  
     // add element in the end of list
     public void appendDocument (Document doc){
   
@@ -53,7 +49,7 @@ public class DocumentCollection {
         size++; 
     }
     // search index of document in this collection
-    // if document contained many time, the lowest index will be returned
+    // if document contained many times, the lowest index will be returned
     public int indexOf(Document doc) {
         if(doc == null || this.isEmpty())
             return -1; 
@@ -79,7 +75,6 @@ public class DocumentCollection {
     public boolean isEmpty(){
         return this.size == 0;
     }
-
     public int numDocs() {
         return this.size; 
     }
@@ -88,7 +83,8 @@ public class DocumentCollection {
         this.start = null;
         this.end = null;
         this.size = 0; 
-    } 
+    }
+
     public Document getFirstDocument(){
         if(this.isEmpty()){
         return null; 
@@ -115,6 +111,7 @@ public class DocumentCollection {
         this.start.setPrevious(null);
         size--; 
     }
+
     public void removeLastDocument() {
         if (this.isEmpty()){
             return;
@@ -207,7 +204,7 @@ for (int i = 0; i < numDocs(); i++) {
 }
 return res;
 }
-    // calculate similirity between specified query and all documents in this
+    // calculate similarity between specified query and all documents in this
     // DocumentCollection. Then its sorts documents in this collection according to the similarity
     public void match(String searchQuery) {
         if (this.isEmpty())
@@ -248,6 +245,46 @@ return res;
             }
             tmp = tmp.getNext();
         }
+    }
+    private static DocumentCollectionCell[] mergeSortIt(DocumentCollectionCell[] a){
+        // separate array in one elements arrays
+        DocumentCollectionCell[][] parts = new DocumentCollectionCell[a.length][];
+        for (int i = 0; i < a.length; i++){
+            parts[i] = new DocumentCollectionCell[] {a[i]};
+        }
+        while (parts.length > 1) {
+            DocumentCollectionCell[][] partsNew = new DocumentCollectionCell[parts.length + 1/2][];
+            for (int i = 0; i < partsNew.length; i++) {
+                // fill up new array with merged and sorted numbers
+                if ( 2 * i + 1 < parts.length)
+                    partsNew[i] = merge(parts[2*i], parts[2 * i + 1]);
+                else
+                    partsNew[i] = parts[2 * i];
+            }
+            parts = partsNew;
+        }
+        return parts[0];
+    }
+    private static DocumentCollectionCell[] merge(DocumentCollectionCell[] a, DocumentCollectionCell[] b){
+        DocumentCollectionCell[] merged = new DocumentCollectionCell[a.length + b.length];
+        int aIndex = 0;
+        int bIndex = 0;
+        // joins all elements in one array
+        for (int i = 0; i < merged.length; i++){
+            // fill out second half of array
+            if (aIndex >= a.length)
+                merged[i] = b[bIndex++];
+            // fill out first half of array if
+            else if (bIndex >= b.length)
+                merged[i] = a[aIndex++];
+            // fill out first half of array with docs which are more relevant to request
+            else if (a[aIndex].getQuerySimilarity() > b[bIndex].getQuerySimilarity())
+                merged[i] = a[aIndex++];
+            // fill out second half of array with resting elements
+            else
+                merged[i] = b[bIndex];
+        }
+        return merged;
     }
 
 }
