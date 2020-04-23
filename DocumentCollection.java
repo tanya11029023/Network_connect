@@ -287,4 +287,63 @@ return res;
         return merged;
     }
 
+    private void swap(DocumentCollectionCell cell1, DocumentCollectionCell cell2){
+        // swap cells with doc and corresponding similarity
+        Document tmpDoc = cell1.getDoc();
+        double tmpSim = cell1.getQuerySimilarity();
+
+        cell1.setDocument(cell2.getDoc());
+        cell1.setQuerySimilarity(cell2.getQuerySimilarity());
+
+        cell2.setDocument(tmpDoc);
+        cell2.setQuerySimilarity(tmpSim);
+    }
+    private void sortBySimilarityDesc() {
+        // copy rows in array
+        DocumentCollectionCell[] cells = new DocumentCollectionCell[this.numDocs()];
+        DocumentCollectionCell actCell = this.start;
+        for(int i = 0; actCell != null; i++){
+            cells[i] = actCell;
+            actCell = actCell.getNext();
+        }
+        // sort
+        cells = mergeSortIt(cells);
+
+        // convert to list
+        DocumentCollectionCell previous = null;
+        DocumentCollectionCell next = null;
+        for(int i = 0; i < cells.length; i++){
+            if ( i > 0)
+                previous = cells[i - 1];
+            if (i == cells.length - 1)
+                next = null;
+            else
+                next = cells[i+1];
+            cells[i].setNext(next);
+            cells[i].setPrevious(previous);
+        }
+        this.start = cells[0];
+    }
+    public double getQuerySimilarity(int index){
+        if (index < 0 || index >= this.numDocs()) {
+            return -1;
+        }
+        return this.getDocCollectionCell(index).getQuerySimilarity();
+    }
+    public String toString() {
+        if (this.numDocs() == 0){
+            return "[]";
+        }
+        if (this.numDocs() == 1){
+            return "[" + this.get(0).getTitle() + "]";
+        }
+        String res = "[";
+        for (int i = 0; i < this.numDocs() - 1; i++){
+            res += this.get(i).getTitle() + ", ";
+        }
+        res += this.get(this.numDocs()-1).getTitle() + "]";
+        return res;
+    }
+
+
 }
