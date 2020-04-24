@@ -21,8 +21,8 @@ public String getEmail() { return email; }
 public String toString() {return this.firstName + "" + this.lastName; }
 
 public String getContactInformation() {
-return this.firstName + "" + this.lastName + Terminal.NEWLINE + "<" + 
-this.email + ">" + Termianl.NEWLINE + this.residence; 
+return this.firstName + "" + this.lastName + com.company.Terminal.NEWLINE + "<" +
+this.email + ">" + com.company.Terminal.NEWLINE + this.residence;
 }
 
 public int getAgeAt(Date today) {return this.birthday.getAgeInYearsAt(today); }
@@ -77,7 +77,7 @@ public void setEmail(String email) {
   }
   
   public static void main (String [] args ){
-    Date birthday = new Date (1, 1, 1990);
+    Date birthday = new Date(1, 1, 1990);
     Date date2 = new Date(1, 1, 1990);
     Author author1 = new Author("Tsoy", "Tatiana", birthday, "Munich", "tanya11@com");
     Author author2 = new Author("Tsoy", "Tatiana", date2, "Munich", "tanya11@de");

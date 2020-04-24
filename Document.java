@@ -1,4 +1,4 @@
-import javax.print.Doc;
+import java.util.Date;
 
 public class Document {
 private String title;
@@ -206,7 +206,7 @@ private static String[] tokenize(String content) {
         Date d1 = new Date(1, 1, 1990);
         Date d2 = new Date(1, 1, 1990);
         Author a1 = new Author(null, null, null, null, null);
-        Author a2 = new Author("Tsoy", "Tatiana", d2, "Munich", "tanya11@com.com");
+        Author a2 = new Author("Tsoy", "Tatiana", d1, "Munich", "tanya11@com.com");
         Document doc1 = new Document("name", "en", "text", d1, a1, "llll");
         Document doc2 = new Document("name", "en", "text", d2, a2, "llll");
         System.out.println(doc1.equals(doc2));

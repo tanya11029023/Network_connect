@@ -1,5 +1,3 @@
-package com.company;
-
 public class Date {
 
     private int day;
@@ -7,9 +5,9 @@ public class Date {
     private int year;
 
     public Date() {
-        this.day = Terminal.TODAYS_DAY;
-        this.month = Terminal.TODAYS_MONTH;
-        this.year = Terminal.TODAYS_YEAR;
+        this.day = com.company.Terminal.TODAYS_DAY;
+        this.month = com.company.Terminal.TODAYS_MONTH;
+        this.year = com.company.Terminal.TODAYS_YEAR;
     }
 
     public Date(int day, int month, int year) {
