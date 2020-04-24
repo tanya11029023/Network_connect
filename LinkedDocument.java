@@ -1,6 +1,3 @@
-
-import java.util.Date;
-
 public class LinkedDocument extends Document {
     // Variables for ID and links
     String ID;

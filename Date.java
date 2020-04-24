@@ -5,9 +5,9 @@ public class Date {
     private int year;
 
     public Date() {
-        this.day = com.company.Terminal.TODAYS_DAY;
-        this.month = com.company.Terminal.TODAYS_MONTH;
-        this.year = com.company.Terminal.TODAYS_YEAR;
+        this.day = Terminal.TODAYS_DAY;
+        this.month = Terminal.TODAYS_MONTH;
+        this.year = Terminal.TODAYS_YEAR;
     }
 
     public Date(int day, int month, int year) {
@@ -164,27 +164,6 @@ private int daysInMonth(int month, int year) {
   }
     public static void main (String [] args ){
         Date date1 = new Date(11, 2, 1972);
-        Date date2 = new Date(11, 2, 1973);
-        Date date3 = new Date (11, 4, 1980);
-        Date date4 = new Date (5, 9, 1990);
-        Date date5 = new Date (25, 11, 2015);
-        Date today = new Date(26, 11, 2018);
-        //System.out.println(date1.equals(date2));
-        //System.out.println(daysInYear(2400));
-        //System.out.println(date1.daysSince1970());
-        /*System.out.println(daysInYear(1970));
-        System.out.println(daysInYear(1971));
-        System.out.println(daysInYear(1973));
-        System.out.println(daysInYear(1974));
-        System.out.println(daysInYear(1972));
-        System.out.println(daysInYear(1976));
-        System.out.println(daysInYear(1980)); */
-        /*System.out.println(date2.daysSince1970());
-        System.out.println(date3.daysSince1970());
-        System.out.println(date4.daysSince1970());
-        System.out.println(date5.daysSince1970()); */
-        //System.out.println(date5.average(today));
-        System.out.println(date5.getAgeInYearsAt(today));
-        //System.out.println(date5.getAgeInDaysAt(today));
-}
+
+}}
 
