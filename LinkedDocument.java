@@ -8,7 +8,7 @@ public class LinkedDocument extends Document {
     LinkedDocumentCollection incomingLinks;
     LinkedDocumentCollection outgoingLinks;
 
-    public LinkedDocument(String ID, String title, String language, String description, String content, Date releaseDate, Author author){
+    public LinkedDocument(String ID, String title, String language, String description, Date releaseDate, Author author, String content){
         // call constructor of superclass
         super(title, language, description, releaseDate, author, content);
         this.ID = ID;
@@ -21,7 +21,6 @@ public class LinkedDocument extends Document {
     public String getID(){
         return ID;
     }
-
     // override of equals method in Document class
     @Override
     public boolean equals(Document document){
@@ -70,5 +69,74 @@ public class LinkedDocument extends Document {
                 wca.setCount(indexOfLink, 0);
             }
         }
+    }
+    public void addIncomingLink(LinkedDocument incomingLink) {
+        if(incomingLink.ID.equals(this.ID)){
+            return;
+        } // if link is empty then create new LDCollection
+        if (this.incomingLinks == null){
+            this.incomingLinks = new LinkedDocumentCollection();
+        } // if else, add document to LDCollection
+        this.incomingLinks.appendDocument(incomingLink);
+    }
+
+    // create LinkedDocument from Data in parameter
+    public static LinkedDocument createLinkedDocumentFromFile(String fileName) {
+        // resulting string array contains rows of file, valid data has exactly 2 rows:
+        // title and ID of linkedDocument
+        String[] filetoLink = Terminal.readFile(fileName);
+        if (filetoLink.length < 2)
+            return null;
+        String title = filetoLink[0];
+        String content = filetoLink[1];
+        return new LinkedDocument(fileName, title, "","", null, null, content);
+    }
+
+    // found IDs are name of data, create LinkedDocument
+    // put LD to LDCollection, which represent outgoing links
+    private void createOutgoingDocumentCollection(){
+        // create LDCollection for outgoing links
+        this.outgoingLinks = new LinkedDocumentCollection();
+        // go through all links
+        for (String link : this.links){
+            if (link.equals(this.ID)){
+                continue;
+            }
+            LinkedDocument newDoc = LinkedDocument.createLinkedDocumentFromFile(link);
+            // add this LD to outgoing links
+            this.outgoingLinks.appendDocument(newDoc);
+        }
+    }
+    public LinkedDocumentCollection getOutgoingLinks(){
+        if (outgoingLinks == null)
+            createOutgoingDocumentCollection();
+        return outgoingLinks;
+    }
+    public LinkedDocumentCollection getIncomingLinks(){
+        return incomingLinks;
+    }
+    public LinkedDocumentCollection getOutgoingLinks(LinkedDocumentCollection alreadyLoadedCol){
+        // create LDCollection for result
+        LinkedDocumentCollection res = new LinkedDocumentCollection();
+        // go through all links, continue if they are equal
+        for (String link : this.links){
+            if(link.equals(this.ID)){
+                continue;
+            }
+            boolean alreadyLoaded = false;
+            // go through LDCollection
+            for (int i = 0; i < alreadyLoadedCol.numDocuments(); i++) {
+                // create doc from collection
+                LinkedDocument doc = ((LinkedDocument)alreadyLoadedCol.get(i));
+                if (doc.getID().equals(link)) {
+                    alreadyLoaded = true;
+                }
+            }
+            if(!alreadyLoaded) {
+                LinkedDocument newDoc = LinkedDocument.createLinkedDocumentFromFile(link);
+                res.appendDocument(newDoc);
+            }
+        }
+        return res;
     }
 }
