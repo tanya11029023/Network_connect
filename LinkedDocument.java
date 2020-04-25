@@ -139,4 +139,16 @@ public class LinkedDocument extends Document {
         }
         return res;
     }
+
+    public static void main(String[] args) {
+        String text = "sdjf lksjdfklsj dflks djkfls djkflsdf\nsjdkgl dfjgksfg link:word1 jsdklgjfgkl\najsdkljg
+        dfklg jsdklfh jkdlgh j7\nlink:word2 jsdlg jdfklg jkdlfh j\nlink:word3";
+
+        LinkedDocument doc = new LinkedDocument();
+        String[] res = doc.findOutgoingIDs(text);
+        for(int i = 0; i < res.length; i++){
+            System.out.println(res[i]);
+        }
+
+    }
 }
