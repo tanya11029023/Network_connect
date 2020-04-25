@@ -125,7 +125,7 @@ public class LinkedDocument extends Document {
             }
             boolean alreadyLoaded = false;
             // go through LDCollection
-            for (int i = 0; i < alreadyLoadedCol.numDocuments(); i++) {
+            for (int i = 0; i < alreadyLoadedCol.numDocs(); i++) {
                 // create doc from collection
                 LinkedDocument doc = ((LinkedDocument)alreadyLoadedCol.get(i));
                 if (doc.getID().equals(link)) {
